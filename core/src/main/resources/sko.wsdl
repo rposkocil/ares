@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsdlns="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/sko.wsdl" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:ans="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_sko/v_1.0.5" 
+xmlns:udt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/uvis_datatypes/v_1.0.3" 
+xmlns:dtt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5" 
+name="skoService" targetNamespace="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/sko.wsdl">
+<documentation>verze: 2010-05-06, Copyright 2010 Asseco Czech Republic a.s. Všechna práva vyhrazena</documentation>
+
+   <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema">
+         <import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_sko/v_1.0.5" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_sko/v_1.0.5/ares_answer_sko_v_1.0.5.xsd"/>
+         <import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5/ares_datatypes_v_1.0.5.xsd"/>
+      </schema>                                                                                                                  
+   </types>
+   <message name="GetHttpGetskoRequest">
+      <part name="ico" type="udt:ico"/>
+      <part name="jazyk" type="dtt:jazyk_odkazu"/>               
+      <part name="ver" type="xsd:string"/>
+      <part name="xml" type="dtt:vystup_format_xml"/>
+   </message>
+   <message name="GetHttpGetskoAnswer">
+      <part name="Answer" element="ans:Ares_odpovedi"/>
+   </message>
+   <message name="GetHttpskoFault">
+      <part name="Fault" element="ans:Ares_odpovedi"/>
+   </message>
+   <portType name="HttpGetsko">
+      <operation name="GetXmlFile">
+         <documentation>Request/response operace pro získání xml výpisu sko přes HTTP GET</documentation>
+         <input name="skoRequest" message="wsdlns:GetHttpGetskoRequest"/>
+         <output name="skoAnswer" message="wsdlns:GetHttpGetskoAnswer"/>
+         <fault name="skoFault" message="wsdlns:GetHttpskoFault"/>
+      </operation>
+   </portType>
+   <binding name="HttpGetskoBinding" type="wsdlns:HttpGetsko">
+      <http:binding verb="GET"/>
+      <operation name="GetXmlFile">
+         <http:operation location="/darv_sko.cgi"/>
+         <input name="skoRequest">
+            <http:urlEncoded/>
+         </input>
+         <output name="skoAnswer">
+            <mime:mimeXml part="Answer"/>
+         </output>
+         <fault name="skoFault">
+            <mime:mimeXml part="Fault"/>
+         </fault>
+      </operation>
+   </binding>
+   <service name="skoService">
+      <documentation>Služba poskytuje XML výpis sko ARES ve zkratkách</documentation>
+      <port name="skoHttpGetPort" binding="wsdlns:HttpGetskoBinding">
+         <documentation>Port pro Http Get rozhraní služby skoService</documentation>
+         <http:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares"/>
+      </port>
+   </service>
+</definitions>

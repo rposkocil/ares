@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsdlns="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/ceu.wsdl" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:ans="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_ceu/v_1.0.4" 
+xmlns:udt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/uvis_datatypes/v_1.0.1" 
+xmlns:dtt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" 
+name="CeuService" targetNamespace="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/ceu.wsdl">
+<documentation>verze: 2009-04-07, Copyright 2008 - 2009 Asseco Czech Republic a.s. Všechna práva vyhrazena</documentation>
+
+   <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema">
+         <import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_ceu/v_1.0.4" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_ceu/v_1.0.4/ares_answer_ceud_v_1.0.4.xsd"/>
+         <import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4/ares_datatypes_v_1.0.4.xsd"/>
+      </schema>                                                                                                                  
+   </types>
+   <message name="GetHttpGetCeuRequest">
+      <part name="ico" type="udt:ico"/>
+      <part name="klic" type="xsd:integer"/>      
+      <part name="jazyk" type="dtt:jazyk_odkazu"/>               
+      <part name="ver" type="xsd:string"/>
+      <part name="xml" type="dtt:vystup_format_xml"/>
+   </message>
+   <message name="GetHttpGetCeuAnswer">
+      <part name="Answer" element="ans:Ares_odpovedi"/>
+   </message>
+   <message name="GetHttpCeuFault">
+      <part name="Fault" element="ans:Ares_odpovedi"/>
+   </message>
+   <portType name="HttpGetCeu">
+      <operation name="GetXmlFile">
+         <documentation>Request/response operace pro získání xml výpisu Ceu přes HTTP GET</documentation>
+         <input name="CeuRequest" message="wsdlns:GetHttpGetCeuRequest"/>
+         <output name="CeuAnswer" message="wsdlns:GetHttpGetCeuAnswer"/>
+         <fault name="CeuFault" message="wsdlns:GetHttpCeuFault"/>
+      </operation>
+   </portType>
+   <binding name="HttpGetCeuBinding" type="wsdlns:HttpGetCeu">
+      <http:binding verb="GET"/>
+      <operation name="GetXmlFile">
+         <http:operation location="/darv_ceu.cgi"/>
+         <input name="CeuRequest">
+            <http:urlEncoded/>
+         </input>
+         <output name="CeuAnswer">
+            <mime:mimeXml part="Answer"/>
+         </output>
+         <fault name="CeuFault">
+            <mime:mimeXml part="Fault"/>
+         </fault>
+      </operation>
+   </binding>
+   <service name="CeuService">
+      <documentation>Služba poskytuje XML výpis Ceu ARES</documentation>
+      <port name="CeuHttpGetPort" binding="wsdlns:HttpGetCeuBinding">
+         <documentation>Port pro Http Get rozhraní služby CeuService</documentation>
+         <http:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares"/>
+      </port>
+   </service>
+</definitions>

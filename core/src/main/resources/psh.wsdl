@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsdlns="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/psh.wsdl" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:ans="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_psh/v_1.0.5" 
+xmlns:udt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/uvis_datatypes/v_1.0.3" 
+xmlns:dtt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5" 
+name="PshService" targetNamespace="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/psh.wsdl">
+<documentation>verze: 2010-07-30, Copyright 2010 Asseco Central Europe a.s. Všechna práva vyhrazena</documentation>
+
+   <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema">
+         <import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_psh/v_1.0.5" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_psh/v_1.0.5/ares_answer_psh_v_1.0.5.xsd"/>
+         <import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5/ares_datatypes_v_1.0.5.xsd"/>
+      </schema>                                                                                                                  
+   </types>
+   <message name="GetHttpGetPshRequest">
+      <part name="ico" type="udt:ico"/>
+      <part name="jazyk" type="dtt:jazyk_odkazu"/>               
+      <part name="ver" type="xsd:string"/>
+      <part name="xml" type="dtt:vystup_format_xml"/>
+   </message>
+   <message name="GetHttpGetPshAnswer">
+      <part name="Answer" element="ans:Ares_odpovedi"/>
+   </message>
+   <message name="GetHttpPshFault">
+      <part name="Fault" element="ans:Ares_odpovedi"/>
+   </message>
+   <portType name="HttpGetPsh">
+      <operation name="GetXmlFile">
+         <documentation>Request/response operace pro získání xml výpisu PSH přes HTTP GET</documentation>
+         <input name="PshRequest" message="wsdlns:GetHttpGetPshRequest"/>
+         <output name="PshAnswer" message="wsdlns:GetHttpGetPshAnswer"/>
+         <fault name="PshFault" message="wsdlns:GetHttpPshFault"/>
+      </operation>
+   </portType>
+   <binding name="HttpGetPshBinding" type="wsdlns:HttpGetPsh">
+      <http:binding verb="GET"/>
+      <operation name="GetXmlFile">
+         <http:operation location="/darv_psh.cgi"/>
+         <input name="PshRequest">
+            <http:urlEncoded/>
+         </input>
+         <output name="PshAnswer">
+            <mime:mimeXml part="Answer"/>
+         </output>
+         <fault name="PshFault">
+            <mime:mimeXml part="Fault"/>
+         </fault>
+      </operation>
+   </binding>
+   <service name="PshService">
+      <documentation>Služba poskytuje XML výpis PSH ARES ve zkratkách</documentation>
+      <port name="PshHttpGetPort" binding="wsdlns:HttpGetPshBinding">
+         <documentation>Port pro Http Get rozhraní služby PshService</documentation>
+         <http:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares"/>
+      </port>
+   </service>
+</definitions>

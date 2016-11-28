@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsdlns="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/res.wsdl" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:req="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_orrg/v_1.0.0" 
+xmlns:ans="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_res/v_1.0.3" 
+xmlns:udt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/uvis_datatypes/v_1.0.3" 
+xmlns:dtt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5" 
+name="ResService" targetNamespace="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/res.wsdl">
+<documentation>verze: 2010-09-03, Copyright 2010 Asseco Central Europe, a.s. Všechna práva vyhrazena</documentation>
+
+<types>
+<schema xmlns="http://www.w3.org/2001/XMLSchema">
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_orrg/v_1.0.0" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_orrg/v_1.0.0/ares_request_orrg.xsd"/>
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_res/v_1.0.3" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_res/v_1.0.3/ares_answer_res_v_1.0.3.xsd"/>
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.5/ares_datatypes_v_1.0.5.xsd"/>
+</schema>
+</types>
+
+<message name="GetHttpSoapResRequest">
+<part name="Request" element="req:Ares_dotazy"/>
+</message>
+<message name="GetHttpSoapResAnswer">
+<part name="Answer" element="ans:Ares_odpovedi"/>
+</message>
+<message name="GetHttpGetResRequest">
+<part name="ico" type="udt:ico"/>
+<part name="jazyk" type="dtt:jazyk_odkazu"/>					
+<part name="ver" type="xsd:string"/>
+<part name="xml" type="dtt:vystup_format_xml"/>
+</message>
+<message name="GetHttpGetResAnswer">
+<part name="Answer" element="ans:Ares_odpovedi"/>
+</message>
+<message name="GetHttpResFault">
+<part name="Fault" element="ans:Ares_odpovedi"/>
+</message>
+<portType name="HttpSoapRes">
+<operation name="GetXmlFile">
+<documentation>Request/response operace pro získání xml výpisu Res přes HTTP ve formátu SOAP</documentation>
+<input name="ResRequest" message="wsdlns:GetHttpSoapResRequest"/>
+<output name="ResAnswer" message="wsdlns:GetHttpSoapResAnswer"/>
+<fault name="ResFault" message="wsdlns:GetHttpResFault"/>
+</operation>
+</portType>
+<portType name="HttpGetRes">
+<operation name="GetXmlFile">
+<documentation>Request/response operace pro získání xml výpisu Res přes HTTP GET</documentation>
+<input name="ResRequest" message="wsdlns:GetHttpGetResRequest"/>
+<output name="ResAnswer" message="wsdlns:GetHttpGetResAnswer"/>
+<fault name="ResFault" message="wsdlns:GetHttpResFault"/>
+</operation>
+</portType>
+<binding name="HttpSoapResBinding" type="wsdlns:HttpSoapRes">
+<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<operation name="GetXmlFile">
+<soap:operation soapAction="" style="document"/>
+<input name="ResRequest">
+<soap:body use="literal"/>
+</input>
+<output name="ResAnswer">
+<soap:body use="literal"/>
+</output>
+<fault name="ResFault">
+<soap:fault name ="ResFault" use="literal"/>
+</fault>
+</operation>
+</binding>
+<binding name="HttpGetResBinding" type="wsdlns:HttpGetRes">
+<http:binding verb="GET"/>
+<operation name="GetXmlFile">
+<http:operation location="/darv_res.cgi"/>
+<input name="ResRequest">
+<http:urlEncoded/>
+</input>
+<output name="ResAnswer">
+<mime:mimeXml part="Answer"/>
+</output>
+<fault name="ResFault">
+<mime:mimeXml part="Fault"/>
+</fault>
+</operation>
+</binding>
+<service name="ResService">
+<documentation>Služba poskytuje XML výpis Res ve zkratkách</documentation>
+<port name="ResHttpSoapPort" binding="wsdlns:HttpSoapResBinding">
+<documentation>Port pro Http Soap rozhraní služby ResService</documentation>
+<soap:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares/xar.cgi"/>
+</port>
+<port name="ResHttpGetPort" binding="wsdlns:HttpGetResBinding">
+<documentation>Port pro Http Get rozhraní služby ResService</documentation>
+<http:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares"/>
+</port>
+</service>
+</definitions>

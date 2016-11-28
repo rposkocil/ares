@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsdlns="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/zm.wsdl" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:req="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_zm/v_1.0.0" 
+xmlns:ans="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_zm/v_1.0.0" 
+xmlns:udt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/uvis_datatypes/v_1.0.1" 
+xmlns:dtt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" 
+name="ZmService" targetNamespace="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/zm.wsdl">
+<documentation>verze: 2010-09-03, Copyright 2010 Asseco Central Europe, a.s. Všechna práva vyhrazena</documentation>
+
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_zm/v_1.0.0" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_zm/v_1.0.0/ares_request_zm.xsd"/>
+			<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_zm/v_1.0.0" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_zm/v_1.0.0/ares_answer_zm.xsd"/>
+			<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4/ares_datatypes_v_1.0.4.xsd"/>
+		</schema>
+	</types>
+	
+	<message name="GetHttpSoapZmRequest">
+	<part name="Request" element="req:Ares_dotazy"/>
+	</message>
+	<message name="GetHttpSoapZmAnswer">
+	<part name="Answer" element="ans:Ares_odpovedi"/>
+	</message>
+	<message name="GetHttpGetZmRequest">
+		<part name="cislo_zdroje" type="dtt:registr_kod"/>
+		<part name="cislo_davky_od" type="xsd:integer"/>
+		<part name="cislo_davky_do" type="xsd:integer"/>
+		<part name="jazyk" type="dtt:jazyk_odkazu"/>
+		<part name="xml" type="dtt:vystup_format_xml"/>
+	</message>
+	<message name="GetHttpGetZmAnswer">
+		<part name="Answer" element="ans:Ares_odpovedi"/>
+	</message>
+	<message name="GetHttpZmFault">
+		<part name="Fault" element="ans:Ares_odpovedi"/>
+	</message>
+	<portType name="HttpSoapZm">
+	<operation name="GetXmlFile">
+	<documentation>Request/response operace pro získání xml výpisu změn jádra přes HTTP ve formátu SOAP</documentation>
+	<input name="ZmRequest" message="wsdlns:GetHttpSoapZmRequest"/>
+	<output name="ZmAnswer" message="wsdlns:GetHttpSoapZmAnswer"/>
+	<fault name="ZmFault" message="wsdlns:GetHttpZmFault"/>
+	</operation>
+	</portType>
+	<portType name="HttpGetZm">
+		<operation name="GetXmlFile">
+			<documentation>Request/response operace pro získání xml výpisu změn jádra přes HTTP GET</documentation>
+			<input name="ZmRequest" message="wsdlns:GetHttpGetZmRequest"/>
+			<output name="ZmAnswer" message="wsdlns:GetHttpGetZmAnswer"/>
+			<fault name="ZmFault" message="wsdlns:GetHttpZmFault"/>
+		</operation>
+	</portType>
+	<binding name="HttpSoapZmBinding" type="wsdlns:HttpSoapZm">
+	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+	<operation name="GetXmlFile">
+	<soap:operation soapAction="" style="document"/>
+	<input name="ZmRequest">
+	<soap:body use="literal"/>
+	</input>
+	<output name="ZmAnswer">
+	<soap:body use="literal"/>
+	</output>
+	<fault name="ZmFault">
+	<soap:fault name ="ZmFault" use="literal"/>
+	</fault>
+	</operation>
+	</binding>
+	<binding name="HttpGetZmBinding" type="wsdlns:HttpGetZm">
+		<http:binding verb="GET"/>
+		<operation name="GetXmlFile">
+			<http:operation location="/darv_zm.cgi"/>
+			<input name="ZmRequest">
+				<http:urlEncoded/>
+			</input>
+			<output name="ZmAnswer">
+				<mime:mimeXml part="Answer"/>
+			</output>
+			<fault name="ZmFault">
+				<mime:mimeXml part="Fault"/>
+			</fault>
+		</operation>
+	</binding>
+	<service name="ZmService">
+		<documentation>Služba poskytuje XML výpis změn jádra ARES</documentation>
+		<port name="ZmHttpSoapPort" binding="wsdlns:HttpSoapZmBinding">
+		<documentation>Port pro Http Soap rozhraní služby ZmService</documentation>
+		<soap:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares/xar.cgi"/>
+		</port>		
+		<port name="ZmHttpGetPort" binding="wsdlns:HttpGetZmBinding">
+			<documentation>Port pro Http Get rozhraní služby ZmService</documentation>
+			<http:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares"/>
+		</port>
+	</service>
+</definitions>

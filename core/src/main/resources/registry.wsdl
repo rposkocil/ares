@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsdlns="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/registry.wsdl" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:req="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_orrg/v_1.0.0" 
+xmlns:ans="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_rg/v_1.0.0" 
+xmlns:udt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/uvis_datatypes/v_1.0.1" 
+xmlns:dtt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" 
+name="RegistryService" targetNamespace="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/registry.wsdl">
+<documentation>verze: 2010-09-03, Copyright 2010 Asseco Central Europe, a.s. Všechna práva vyhrazena</documentation>
+
+<types>
+<schema xmlns="http://www.w3.org/2001/XMLSchema">
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_orrg/v_1.0.0" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_orrg/v_1.0.0/ares_request_orrg.xsd"/>
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_rg/v_1.0.0" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_rg/v_1.0.0/ares_answer_rg.xsd"/>
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4/ares_datatypes_v_1.0.4.xsd"/>
+</schema>
+</types>
+
+<message name="GetHttpSoapRegistryRequest">
+<part name="Request" element="req:Ares_dotazy"/>
+</message>
+<message name="GetHttpSoapRegistryAnswer">
+<part name="Answer" element="ans:Ares_odpovedi"/>
+</message>
+<message name="GetHttpGetRegistryRequest">
+<part name="ico" type="udt:ico"/>
+<part name="datum_platnosti" type="xsd:date"/>
+<part name="xml" type="dtt:vystup_format_xml"/>
+<part name="jazyk" type="dtt:jazyk_odkazu"/>		
+<part name="ver" type="xsd:string"/>																
+</message>
+<message name="GetHttpGetRegistryAnswer">
+<part name="Answer" element="ans:Ares_odpovedi"/>
+</message>
+<message name="GetHttpRegistryFault">
+<part name="Fault" element="ans:Ares_odpovedi"/>
+</message>
+<portType name="HttpSoapRegistry">
+<operation name="GetXmlFile">
+<documentation>Request/response operace pro získání xml výpisu REGISTRY přes HTTP ve formátu SOAP</documentation>		
+<input name="RegistryRequest" message="wsdlns:GetHttpSoapRegistryRequest"/>
+<output name="RegistryAnswer" message="wsdlns:GetHttpSoapRegistryAnswer"/>
+<fault name="RegistryFault" message="wsdlns:GetHttpRegistryFault"/>			
+</operation>
+</portType>
+<portType name="HttpGetRegistry">
+<operation name="GetXmlFile">
+<documentation>Request/response operace pro získání xml výpisu REGISTRY přes HTTP GET</documentation>
+<input name="RegistryRequest" message="wsdlns:GetHttpGetRegistryRequest"/>
+<output name="RegistryAnswer" message="wsdlns:GetHttpGetRegistryAnswer"/>
+<fault name="RegistryFault" message="wsdlns:GetHttpRegistryFault"/>
+</operation>
+</portType>
+<binding name="HttpSoapRegistryBinding" type="wsdlns:HttpSoapRegistry">
+<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<operation name="GetXmlFile">
+<soap:operation soapAction="" style="document"/>
+<input name="RegistryRequest">
+<soap:body use="literal"/>
+</input>
+<output name="RegistryAnswer">
+<soap:body use="literal"/>
+</output>
+<fault name="RegistryFault">
+<soap:fault name ="RegistryFault" use="literal"/>
+</fault>
+</operation>
+</binding>
+<binding name="HttpGetRegistryBinding" type="wsdlns:HttpGetRegistry">
+<http:binding verb="GET"/>
+<operation name="GetXmlFile">
+<http:operation location="/darv_reg.cgi"/>
+<input name="RegistryRequest">
+<http:urlEncoded/>
+</input>
+<output name="RegistryAnswer">
+<mime:mimeXml part="Answer"/>
+</output>
+<fault name="RegistryFault">
+<mime:mimeXml part="Fault"/>
+</fault>
+</operation>
+</binding>
+<service name="RegistryService">
+<documentation>Služba poskytuje XML výpis Registry</documentation>
+<port name="RegistryHttpSoapPort" binding="wsdlns:HttpSoapRegistryBinding">
+<soap:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares/xar.cgi"/>
+</port>
+<port name="RegistryHttpGetPort" binding="wsdlns:HttpGetRegistryBinding">
+<documentation>Port pro Http Get rozhraní služby RegistryService</documentation>
+<http:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares"/>
+</port>
+</service>
+</definitions>

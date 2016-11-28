@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:wsdlns="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/adresa.wsdl" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:req="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_adr/v_2.0.0" 
+xmlns:ans="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_adr/v_2.0.0" 
+xmlns:udt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/uvis_datatypes/v_1.0.1" 
+xmlns:dtt="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" 
+name="AdresaService" targetNamespace="http://wwwinfo.mfcr.cz/ares/xml_doc/wsdl/adresa.wsdl">
+<documentation>verze: 2010-09-03, Copyright 2010 Asseco Central Europe, a.s. Všechna práva vyhrazena</documentation>
+
+<types>
+<schema xmlns="http://www.w3.org/2001/XMLSchema">
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_adr/v_2.0.0" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_request_adr/v_2.0.0/ares_request_adr_v_2.0.0.xsd"/>
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_adr/v_2.0.0" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_answer_adr/v_2.0.0/ares_answer_adr.xsd"/>
+<import namespace="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4" schemaLocation="http://wwwinfo.mfcr.cz/ares/xml_doc/schemas/ares/ares_datatypes/v_1.0.4/ares_datatypes_v_1.0.4.xsd"/>
+</schema>
+</types>
+	
+<message name="GetHttpSoapAdresaRequest">
+<part name="Request" element="req:Ares_dotazy"/>
+</message>
+<message name="GetHttpSoapAdresaAnswer">
+<part name="Answer" element="ans:Ares_odpovedi"/>
+</message>
+<message name="GetHttpGetAdresaRequest">
+<part name="kraj" type="udt:nazev_kraje"/>
+<part name="pobvod" type="udt:nazev_obce"/>
+<part name="okres" type="udt:nazev_okresu"/>
+<part name="obec" type="udt:nazev_obce"/>		
+<part name="ulice" type="udt:nazev_ulice"/>				
+<part name="mestska_cast" type="udt:nazev_mestske_casti"/>						
+<part name="cast_obce" type="udt:nazev_casti_obce"/>								
+<part name="cislo_do_adresy" type="dtt:cislo_do_adresy"/>										
+<part name="adresa_textem" type="dtt:adresa_textem"/>												
+<part name="max_pocet" type="xsd:short"/>														
+<part name="typ" type="dtt:ano_ne"/>																
+<part name="redukce" type="dtt:ano_ne"/>																
+<part name="cestina" type="dtt:ano_ne"/>		
+<part name="xml" type="dtt:vystup_format_xml"/>
+<part name="jazyk" type="dtt:jazyk_odkazu"/>	
+<part name="ver" type="xsd:string"/>																											
+</message>
+<message name="GetHttpGetAdresaAnswer">
+<part name="Answer" element="ans:Ares_odpovedi"/>
+</message>
+<message name="GetHttpAdresaFault">
+<part name="Fault" element="ans:Ares_odpovedi"/>
+</message>
+<portType name="HttpSoapAdresa">
+<operation name="GetXmlFile">
+<documentation>Request/response operace pro získání xml výpisu standartizace adresy přes HTTP ve formátu SOAP</documentation>
+<input name="AdresaRequest" message="wsdlns:GetHttpSoapAdresaRequest"/>
+<output name="AdresaAnswer" message="wsdlns:GetHttpSoapAdresaAnswer"/>
+<fault name="AdresaFault" message="wsdlns:GetHttpAdresaFault"/>			
+</operation>
+</portType>
+<portType name="HttpGetAdresa">
+<operation name="GetXmlFile">
+<documentation>Request/response operace pro získání xml výpisu standartizace adresy přes HTTP GET</documentation>
+<input name="AdresaRequest" message="wsdlns:GetHttpGetAdresaRequest"/>
+<output name="AdresaAnswer" message="wsdlns:GetHttpGetAdresaAnswer"/>
+<fault name="AdresaFault" message="wsdlns:GetHttpAdresaFault"/>
+</operation>
+</portType>
+<binding name="HttpSoapAdresaBinding" type="wsdlns:HttpSoapAdresa">
+<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<operation name="GetXmlFile">
+<soap:operation soapAction="" style="document"/>
+<input name="AdresaRequest">
+<soap:body use="literal"/>
+</input>
+<output name="AdresaAnswer">
+<soap:body use="literal"/>
+</output>
+<fault name="AdresaFault">
+<soap:fault name ="AdresaFault" use="literal"/>
+</fault>
+</operation>
+</binding>
+<binding name="HttpGetAdresaBinding" type="wsdlns:HttpGetAdresa">
+<http:binding verb="GET"/>
+<operation name="GetXmlFile">
+<http:operation location="/darv_adr.cgi"/>
+<input name="AdresaRequest">
+<http:urlEncoded/>
+</input>
+<output name="AdresaAnswer">
+<mime:mimeXml part="Answer"/>
+</output>
+<fault name="AdresaFault">
+<mime:mimeXml part="Fault"/>
+</fault>
+</operation>
+</binding>
+<service name="AdresaService">
+<documentation>Služba poskytuje XML výpis standartizace adresy</documentation>
+<port name="AdresaHttpSoapPort" binding="wsdlns:HttpSoapAdresaBinding">
+<documentation>Port pro Http Soap rozhraní služby AdresaService</documentation>	
+<soap:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares/xar.cgi"/>
+</port>
+<port name="AdresaHttpGetPort" binding="wsdlns:HttpGetAdresaBinding">
+<documentation>Port pro Http Get rozhraní služby AdresaService</documentation>
+<http:address location="http://wwwinfo.mfcr.cz/cgi-bin/ares"/>
+</port>		
+</service>
+</definitions>
