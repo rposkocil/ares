@@ -13,7 +13,9 @@ public class StandardResponseTemplate {
         StandardResponses standardResponses = new StandardResponses();
         standardResponses.setId(responses.getId());
         standardResponses.setType(responses.getOdpovedTyp());
-        standardResponses.setResponseDate(responses.getOdpovedDatumCas().toGregorianCalendar().getTime());
+        if(responses.getOdpovedDatumCas() != null) {
+            standardResponses.setResponseDate(responses.getOdpovedDatumCas().toGregorianCalendar().getTime());
+        }
         standardResponses.setFail(responses.getFault());
 
         List<Odpoved> odpovedList = responses.getOdpoved();

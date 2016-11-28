@@ -3,7 +3,6 @@ package com.hi.aresservice;
 import com.hi.aresservice.basic.BasicClient;
 import com.hi.aresservice.basic.BasicQuery;
 import com.hi.aresservice.standard.*;
-import cz.mfcr.wwwinfo.ares.xml_doc.schemas.ares.ares_answer.v_1_0.AresOdpovedi;
 
 public class Main {
 
@@ -18,10 +17,7 @@ public class Main {
         standardQuery.setCity("Chrudim");
         standardClient.addQuery(standardQuery);
 
-        AresOdpovedi odpovedi = standardClient.call();
-
-        StandardResponseTemplate standardResponseTemplate = new StandardResponseTemplate();
-        StandardResponses standardResponses = standardResponseTemplate.transform(odpovedi);
+        StandardResponses standardResponses = standardClient.call();
         System.out.println(standardResponses.toString());
 
         /*
