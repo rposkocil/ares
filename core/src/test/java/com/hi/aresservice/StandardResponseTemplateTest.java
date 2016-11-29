@@ -1,5 +1,6 @@
 package com.hi.aresservice;
 
+import com.hi.aresservice.standard.StandardRecord;
 import com.hi.aresservice.standard.StandardResponse;
 import com.hi.aresservice.standard.StandardResponseTemplate;
 import com.hi.aresservice.standard.StandardResponses;
@@ -13,6 +14,7 @@ import org.junit.Test;
 public class StandardResponseTemplateTest {
 
     private static StandardResponses standardResponses;
+    private static Zaznam zaznam;
 
     @BeforeClass
     public static void init(){
@@ -47,6 +49,22 @@ public class StandardResponseTemplateTest {
         }
     }
 
+    @Test
+    public void testStandardRecordTransfromation(){
+        StandardRecord record = standardResponses.getStandardResponseList().get(1).getRecords().get(0);
+        Assert.assertEquals("IcoStatus.K is NOT correct.", zaznam.getShodaICO().getK(), record.getIcoStatus().getK());
+        Assert.assertEquals("IdStatus.V is NOT correct.", zaznam.getShodaRC().getT(), record.getIdStatus().getT());
+        Assert.assertEquals("CompanyStatus is NOT correct.", zaznam.getShodaOF().getK(), record.getCompanyStatus().getK());
+        Assert.assertEquals("SearchBy is NOT correct.", zaznam.getVyhledanoDle(), record.getSearchBy());
+        Assert.assertEquals("CatalogType is NOT correct.", zaznam.getTypRegistru().getT(), record.getCatalogType().getT());
+        Assert.assertEquals("LegalForm is NOT correct.", zaznam.getPravniForma().getKPF(), record.getLegalForm().getKPF());
+        Assert.assertEquals("Ico is NOT correct.", zaznam.getICO(), record.getIco());
+        Assert.assertEquals("Company is NOT correct.", zaznam.getObchodniFirma(), record.getCompany());
+        Assert.assertEquals("Identification is NOT correct.", zaznam.getIdentifikace().getOsoba().getP(), record.getIdentification().getOsoba().getP());
+        Assert.assertEquals("Code is NOT correct.", zaznam.getKodFU(), record.getCode());
+        Assert.assertEquals("Properties are NOT correct.", zaznam.getPriznakySubjektu(), record.getProperties());
+    }
+
     private static AresOdpovedi generateAresOdpovedi() {
 
         AresOdpovedi aresOdpovedi = new AresOdpovedi();
@@ -70,14 +88,15 @@ public class StandardResponseTemplateTest {
         odpoved.setPomocneID(id);
         odpoved.setPocetZaznamu(countOfZaznam);
         odpoved.setTypVyhledani(AresVyberTyp2.FREE);
+        generateZaznam();
         for(int i = 0; i < countOfZaznam; i++) {
-            odpoved.getZaznam().add(generateZaznam());
+            odpoved.getZaznam().add(zaznam);
         }
         return odpoved;
     }
 
     private static Zaznam generateZaznam() {
-        Zaznam zaznam = new Zaznam();
+        zaznam = new Zaznam();
 
         ShodaICO2 shodaICO2 = new ShodaICO2();
         shodaICO2.setK(1);
